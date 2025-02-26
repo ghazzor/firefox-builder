@@ -37,8 +37,8 @@ setup_build() {
 setup_build
 
 # Copy configuration
-echo "Configuring build..."
-./mach --no-interactive bootstrap
+#echo "Configuring build..."
+#./mach --no-interactive bootstrap
 echo "Copying mozconfig..."
 cp ../mozconfig .
 ./mach configure
