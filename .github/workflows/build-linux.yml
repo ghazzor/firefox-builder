@@ -1,7 +1,14 @@
 name: Linux
 
 on:
+  schedule:
+    - cron: '30 5 * * 0,3,5'
   workflow_dispatch:
+    inputs:
+      FORCE_BUILD:
+        description: 'build forcefully'
+        required: true
+        default: '0'
 
 jobs:
   build:
@@ -9,6 +16,30 @@ jobs:
     permissions:
       contents: write
     steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Firefox version
+        id: version
+        run: |
+          VERSION=$(curl -s https://product-details.mozilla.org/1.0/firefox_versions.json | jq -r '.LATEST_FIREFOX_VERSION')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check Firefox version
+        run: |
+          if [[ ${{ github.event.inputs.FORCE_BUILD }} == 1 ]]; then
+            echo "building..."
+          fi
+
+          export current_ver=$(cat latver)
+          if [[ ${current_ver} == ${{ steps.version.outputs.version }} && ${{ github.event.inputs.FORCE_BUILD }} == 0 ]]; then
+           echo "Already on latest version, aborting..."
+           exit 1
+          else
+           echo "New release found, building firefox..."
+          fi
+
       - name: Free up Disk Space
         run: |
           sudo rm -rf /usr/local/lib/android
@@ -16,9 +47,6 @@ jobs:
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache/CodeQL
           sudo docker image prune --all --force
-
-      - name: Checkout code
-        uses: actions/checkout@v4
 
       - name: Install Deps
         run: |
@@ -38,12 +66,12 @@ jobs:
         run: |
           export DISPLAY=:99
           Xvfb $DISPLAY -screen 0 1024x768x24 >/dev/null 2>&1 & bash build.sh
-
-      - name: Get Firefox version
-        id: version
-        run: |
-          VERSION=$(curl -s https://product-details.mozilla.org/1.0/firefox_versions.json | jq -r '.LATEST_FIREFOX_VERSION')
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo ${{ steps.version.outputs.version }} > latver
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add latver
+          git commit -m "latver: update firefox ver to ${{ steps.version.outputs.version }}"
+          git push
 
       - name: Set Release Tag Output
         id: release-tag
