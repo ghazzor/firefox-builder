@@ -65,6 +65,7 @@ jobs:
       - name: Build
         run: |
           export DISPLAY=:99
+          export deb_pkg=1
           Xvfb $DISPLAY -screen 0 1024x768x24 >/dev/null 2>&1 & bash build.sh
           echo ${{ steps.version.outputs.version }} > latver
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"

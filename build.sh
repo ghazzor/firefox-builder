@@ -4,7 +4,9 @@ set -e
 
 source functions.sh
 
-export deb_pkg=1
+if [ -z ${deb_pkg}  ]; then
+export deb_pkg=0
+fi
 
 build_firefox() {
     # Copy configuration
