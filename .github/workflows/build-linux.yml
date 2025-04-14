@@ -28,12 +28,19 @@ jobs:
 
       - name: Check Firefox version
         run: |
-          if [[ ${{ github.event.inputs.FORCE_BUILD }} == 1 ]]; then
+          export FORCE_BUILD="${{ github.event.inputs.FORCE_BUILD }}"
+          if [ -z "${FORCE_BUILD}" ]; then
+            FORCE_BUILD=0
+          fi
+
+          echo "FORCE_BUILD=${FORCE_BUILD}"
+    
+          if [[ ${FORCE_BUILD} == 1 ]]; then
             echo "building..."
           fi
 
           export current_ver=$(cat latver)
-          if [[ ${current_ver} == ${{ steps.version.outputs.version }} && ${{ github.event.inputs.FORCE_BUILD }} == 0 ]]; then
+          if [[ ${current_ver} == ${{ steps.version.outputs.version }} && ${FORCE_BUILD} == 0 ]]; then
            echo "Already on latest version, aborting..."
            exit 1
           else
