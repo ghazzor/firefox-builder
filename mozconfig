@@ -28,10 +28,10 @@ ac_add_options --enable-sandbox
 
 ac_add_options --disable-accessibility
 ac_add_options --disable-webspeech
-ac_add_options --disable-dbus
+#ac_add_options --disable-dbus
 ac_add_options --disable-necko-wifi
 ac_add_options --disable-eme
-ac_add_options --disable-webrtc
+#ac_add_options --disable-webrtc
 ac_add_options --disable-synth-speechd
 ac_add_options --enable-replace-malloc
 
