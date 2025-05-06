@@ -1,3 +1,6 @@
+export srcdir=firefox-tree
+export src='https://github.com/mozilla-firefox/firefox'
+
 sync_ver() {
     echo "Fetching latest Firefox version..."
     VERSION=$(curl -sf https://product-details.mozilla.org/1.0/firefox_versions.json | \
@@ -7,9 +10,9 @@ sync_ver() {
 
     TAG="FIREFOX_$( echo ${ver} | sed 's/\./_/g')_RELEASE"
 
-    echo "Syncing to $TAG"
-    hg up -C "$TAG" || {
-        echo "Error: Failed to update to version $TAG"
+    echo "$TAG"
+    git clone --depth=1 $src -b "$TAG" $srcdir || {
+        echo "Error: Failed to clone version $TAG"
         exit 1
     }
 }
@@ -17,7 +20,7 @@ sync_ver() {
 build_deb() {
 export PACKAGE=firefox-lp3
 
-cp mozilla-unified/objdir-opt/dist/*.tar.* .
+cp $srcdir/objdir-opt/dist/*.tar.* .
 tar xvf *.tar.*
 
 rm -rf $PACKAGE
