@@ -22,17 +22,18 @@ build_firefox() {
 }
 
 setup_and_build() {
-    if [ ! -d mozilla-unified ]; then
-        echo "Downloading bootstrap script..."
-        wget https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -O bootstrap.py
-
-        echo "Setting up repository..."
-        python bootstrap.py --application-choice=browser --no-interactive
+    if [ ! -d $srcdir ]; then
+        echo "Cloning repository..."
+        sync_ver
+        cd $srcdir
+        #bootstrap
+        ./mach --no-interactive bootstrap --application-choice browser
+        build_firefox
+    else
+        cd $srcdir
+        build_firefox
     fi
 
-    cd mozilla-unified
-    sync_ver
-    build_firefox
     cd ..
 
     if [[ $deb_pkg == 1 ]]; then
