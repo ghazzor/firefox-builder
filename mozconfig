@@ -35,8 +35,8 @@ ac_add_options --disable-eme
 ac_add_options --disable-synth-speechd
 ac_add_options --enable-replace-malloc
 
-mk_add_options MOZ_PARALLEL_COMPILE=4
-mk_add_options MOZ_PARALLEL_BUILD=4
+mk_add_options MOZ_PARALLEL_COMPILE=$(nproc)
+mk_add_options MOZ_PARALLEL_BUILD=$(nproc)
 mk_add_options MOZ_CRASHREPORTER=0
 mk_add_options MOZ_DATA_REPORTING=0
 mk_add_options MOZ_SERVICES_HEALTHREPORT=0
@@ -52,5 +52,5 @@ export LDFLAGS="-Wl,--lto-O3 -Wl,--gc-sections -Wl,-z,now -Wl,-z,relro -Wl,--icf
 
 export VERBOSE=1
 mk_add_options AUTOCLOBBER=1
-mk_add_options MOZ_MAKE_FLAGS="-j4"
+mk_add_options MOZ_MAKE_FLAGS="-j$(nproc)"
 mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/objdir-opt
