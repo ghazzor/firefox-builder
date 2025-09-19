@@ -6,7 +6,7 @@ download() {
 
   ASSET_URL=$(echo "${RELEASE_JSON}" | jq -r '.assets[].browser_download_url' | grep 'tar.xz$')
   TARBALL_NAME=$(basename "$ASSET_URL")
-  FIREFOX_DIR="firefox"
+  export FIREFOX_DIR="bin/firefox"
 
   # Extract version
   export ver=$(echo "${RELEASE_JSON}" | jq -r '.tag_name' | cut -f2 -d'-' | cut -f2 -d'v')
@@ -18,7 +18,7 @@ download() {
     rm -rf *.tar.xz
     aria2c ${ASSET_URL}
   fi
-  [[ ! -d firefox ]] && tar -xvf *.tar.xz
+  [[ ! -d "$FIREFOX_DIR" ]] && mkdir -p bin && tar -xvf "$TARBALL_NAME" -C bin
 }
 
 download
@@ -30,12 +30,11 @@ arch=('x86_64')
 url=""
 touch firefox.install
 install=firefox.install
-firefox_bin_dir=firefox
 
 package() {
   cd ..
   mkdir -p "${pkgdir}/opt/"
-  cp -r "firefox" "${pkgdir}/opt/"
+  cp -r "$FIREFOX_DIR" "${pkgdir}/opt/"
   mv "${pkgdir}/opt/firefox/firefox" "${pkgdir}/opt/firefox/$pkgname"
   mv "${pkgdir}/opt/firefox/firefox-bin" "${pkgdir}/opt/firefox/$pkgname-bin"
   mv "${pkgdir}/opt/firefox" "${pkgdir}/opt/$pkgname"
@@ -56,5 +55,5 @@ post_remove() {
 }
 EOF
 
-  rm -rf firefox
+  rm -rf "$FIREFOX_DIR"
 }
