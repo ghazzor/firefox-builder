@@ -42,13 +42,13 @@ mk_add_options MOZ_DATA_REPORTING=0
 mk_add_options MOZ_SERVICES_HEALTHREPORT=0
 mk_add_options MOZ_TELEMETRY_REPORTING=0
 
-export COMMONFLAGS="-O3 -march=x86-64-v3 -mavx2 -maes -msse4.2 -fno-semantic-interposition -fomit-frame-pointer -fdata-sections -ffunction-sections -fno-plt -funroll-loops"
+export COMMONFLAGS="-O2 -march=x86-64-v3 -mavx2 -maes -msse4.2 -fno-semantic-interposition -fomit-frame-pointer -fdata-sections -ffunction-sections -fno-plt -funroll-loops"
 
-export RUSTFLAGS="-C opt-level=3 -C target-cpu=x86-64-v3 -C codegen-units=1 -C target-feature=+avx2,+aes,+sse4.2 -Cpanic=abort -Cforce-frame-pointers=no -Cllvm-args=--inline-threshold=1000 -Cllvm-args=-vectorize-loops -Cllvm-args=-vectorize-slp"
+export RUSTFLAGS="-C opt-level=2 -C target-cpu=x86-64-v3 -C codegen-units=1 -C target-feature=+avx2,+aes,+sse4.2 -Cpanic=abort -Cforce-frame-pointers=no -Cllvm-args=--inline-threshold=1000 -Cllvm-args=-vectorize-loops -Cllvm-args=-vectorize-slp"
 export CFLAGS="$COMMONFLAGS"
 export CXXFLAGS="$COMMONFLAGS"
 
-export LDFLAGS="-Wl,--lto-O3 -Wl,--gc-sections -Wl,-z,now -Wl,-z,relro -Wl,--icf=all $LDFLAGS"
+export LDFLAGS="-Wl,--lto-O2 -Wl,--gc-sections -Wl,-z,now -Wl,-z,relro -Wl,--icf=all $LDFLAGS"
 
 export VERBOSE=1
 mk_add_options AUTOCLOBBER=1
